@@ -1,0 +1,33 @@
+{
+  "name": "bilibili-download",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "pretty": "prettier -c --write src/**/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lecepin/bilibili-download.git"
+  },
+  "author": "lecepin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lecepin/bilibili-download/issues"
+  },
+  "homepage": "https://github.com/lecepin/bilibili-download#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cross-spawn": "^7.0.3",
+    "node-fetch": "^2.6.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "prettier -c --write src/**/* && git add -A ."
+    }
+  },
+  "devDependencies": {
+    "husky": "^7.0.4",
+    "prettier": "^2.6.2"
+  }
+}
