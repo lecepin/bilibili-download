@@ -1,12 +1,6 @@
 const { ipcMain, app, dialog, shell } = require('electron');
-const spawn = require('cross-spawn');
-const child_process = require('child_process');
-const { APP_CONFIG_TOOL_PATH } = require('./const');
 const { getDonwloadUrl, downloadBFile, mergeFileToMp4 } = require('./utils');
-const os = require('os');
 const path = require('path');
-
-let lastChildProcess;
 
 const initIPC = () => {
   ipcMain.on('get-video-info', (event, arg) => {
