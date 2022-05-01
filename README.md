@@ -1,5 +1,5 @@
 # bilibili-download
-B站视频下载工具。下载安装即可使用，无需任何环境配置，无需登录，默认 1080P 下载。
+超简单 B 站视频下载工具。安装即可使用，无需任何环境配置，无需登录，默认画质 1080P，mp4 格式。
 
 请在 [Releases](https://github.com/lecepin/bilibili-download/releases) 中进行下载。
 > 国内用户，如果访问速度慢，可以点击下方链接进行下载：
