@@ -1,0 +1,44 @@
+.App {
+  padding: 10px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &-topbar {
+    width: 100%;
+    & > .ant-space-item {
+      &:nth-last-child(2) {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  &-logo {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-progress {
+    display: flex;
+
+    & > span {
+      white-space: nowrap;
+      margin-right: 10px;
+    }
+
+    & > .ant-progress {
+      flex-grow: 1;
+    }
+  }
+
+  &-result {
+    display: flex;
+    align-items: center;
+
+    & > span {
+      margin-right: 10px;
+    }
+  }
+}
