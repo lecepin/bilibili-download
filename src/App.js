@@ -1,6 +1,11 @@
 import React from 'react';
 import { Space, Select, Input, Button, Divider, Progress, Tag } from 'antd';
-import { CheckCircleOutlined, CloseCircleOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  FolderOpenOutlined,
+  GithubFilled,
+} from '@ant-design/icons';
 import { useMachine } from '@xstate/react';
 import fsm from './fsm';
 import imgLogo from './logo.png';
@@ -70,6 +75,9 @@ export default () => {
 
       <div className="App-logo">
         <img src={imgLogo} />
+        <Button icon={<GithubFilled />} size="large" onClick={() => send('e_github')}>
+          <b> Star</b>
+        </Button>
       </div>
     </div>
   );

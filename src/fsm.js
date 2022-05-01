@@ -1,9 +1,8 @@
 import { createMachine, actions } from 'xstate';
 import { message } from 'antd';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 
-export default /** @xstate-layout N4IgpgJg5mDOIC5QCMCWAbVbMAIIHsB3AO3XwEMIA6QLy9An1IGIwB9QaDlBfeMVAAd9ZUALqnzEuIAB6IAHDKoA2AEwBWAAwBmKSvUqFARgCcAGhABPRGrkqqUtbYAsc-boWOl+uQF8Px7Fgyo8IlIKanomZkBk+MBTRUAGdUABdTFefiERMUkEJysHKQB2OSkFKV0cpUdjMwQFHLVrWzUlHJyVfS0pdy8ff19AkjJKKkBjyMAE80BaOQYCYjAqVGIAN3wAaynfboJekMHRhBn5gGNyFOIAbRUAXUS+QWFRJAlzZSomtV1nWwU1F11yxDslGt05ID9IU5A0DJ5vCAVv4esF+sMxmAAE5I-BIqjcdAHABmaIAtlRobg1nDqAjtnN8PtDidzrckldUrd0h8lI91C93h8PnIvqZEKVdFQ6hY9DldHYpEoOlCujCSX1qIBIBMAl0YcQCy8oA7f3CqsAd26AVX0LslrmlEHkhS5Smo8nI8jk7N9KrorDZ7HkPr8VBKZUSAgqNqqNdqWIA15UAEbYGo2Mm6gdLmqiWuTWwF2h38hAOIUi0FOOwKFT5HI+uXEoKKqgcRFsdiAGO1AAhGUcOpoQzv0bKUulKCj0+f0NjkjolQq0WgU+j7+hKUjzxcwqzLG0r4Q4gEZNQCksY2TczEK3253FD3mv3HXp9FQR17smOpTkFLO-KX1v0OPXwoBlI0AAPqR+mXJvblsKHYQoGEo3ZKOBFjAlIjpOOeF7vOoehqJKXiQsQ+AQHAYi+rC5b0JuTKxogwJyOeTzdoUUigtUjoNHYtT2ICgE5PodhqPe85PmSowETGdwZgotEfPIgKOCoTRyL8RaQjh-r9IG7BarxzYNGyibPHUNjio6dh2DkVAAqJDgdvUdhthx8oLs+7AjMp-7AgoZHqJYY4AixfIVPm9GuvUSh2CoDRtqBFmPqSFa1g2P7GoR-HOFU1j2m2KiSs0LxphUEr0fBXp-C8eTSjJJZ+lZ1CrhuUXRs2cX6bkZmqClTgSieug1PBgFWs8ughcVXF2URLbQemuhSHBF5jVoFioR4QA */
-createMachine(
+export default createMachine(
   {
     context: {
       biliURL: '',
@@ -15,6 +14,11 @@ createMachine(
     },
     id: 'bilibili download',
     initial: '空闲',
+    on: {
+      e_github: {
+        actions: 'action_打开github',
+      },
+    },
     states: {
       空闲: {
         entry: 'action_初始化进度',
@@ -122,6 +126,9 @@ createMachine(
       },
     },
     actions: {
+      action_打开github: () => {
+        shell.openExternal('https://github.com/lecepin/bilibili-download');
+      },
       action_改变地址: actions.assign((context, event) => {
         return {
           biliURL: event.value,

@@ -111,8 +111,7 @@ const initIPC = () => {
   });
 
   ipcMain.on('open-directory', (event, arg) => {
-    // shell.openPath(path.dirname(arg));
-    shell.openPath(arg);
+    shell.openPath(path.dirname(arg));
   });
 
   app.on('before-quit', () => {
