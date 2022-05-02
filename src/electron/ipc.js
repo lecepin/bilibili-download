@@ -1,6 +1,7 @@
 const { ipcMain, app, dialog, shell } = require('electron');
 const { getDonwloadUrl, downloadBFile, mergeFileToMp4 } = require('./utils');
 const path = require('path');
+const { throttle } = require('lodash');
 
 const initIPC = () => {
   ipcMain.on('get-video-info', (event, arg) => {
@@ -14,43 +15,54 @@ const initIPC = () => {
       .catch(err => {
         event.reply('get-video-info', {
           success: false,
-          data: '解析失败',
+          data: '解析失败，请重试一下',
         });
       });
   });
 
   ipcMain.on('get-save-info', (event, arg) => {
     dialog
-      .showSaveDialog({
+      .showOpenDialog({
         title: '保存',
-        defaultPath: arg,
-        filters: [{ name: 'MP4', extensions: ['mp4'] }],
+        properties: ['openDirectory'],
       })
       .then(result => {
         event.reply('get-save-info', {
           success: !result.canceled,
-          data: result.filePath,
+          data: result.filePaths?.[0],
         });
       });
   });
 
   ipcMain.on('download-video', (event, { title, videoUrl, audioUrl }) => {
     Promise.all([
-      downloadBFile(videoUrl, title + '-video.m4s', value =>
-        event.reply('download-progress', {
-          type: 'video',
-          data: value,
-        }),
+      downloadBFile(
+        videoUrl,
+        title + '-video.m4s',
+        throttle(
+          value =>
+            event.reply('download-progress', {
+              type: 'video',
+              data: value,
+            }),
+          1000,
+        ),
       ),
-      downloadBFile(audioUrl, title + '-audio.m4s', value =>
-        event.reply('download-progress', {
-          type: 'audio',
-          data: value,
-        }),
+      downloadBFile(
+        audioUrl,
+        title + '-audio.m4s',
+        throttle(
+          value =>
+            event.reply('download-progress', {
+              type: 'audio',
+              data: value,
+            }),
+          1000,
+        ),
       ),
     ])
       .then(data => {
-        return mergeFileToMp4(data[0].fullFileName, data[1].fullFileName, title);
+        return mergeFileToMp4(data[0].fullFileName, data[1].fullFileName, title + '.mp4');
       })
       .then(data => {
         event.reply('download-video', {
@@ -65,11 +77,9 @@ const initIPC = () => {
   });
 
   ipcMain.on('open-directory', (event, arg) => {
-    shell.openPath(path.dirname(arg));
+    shell.openPath(arg);
   });
 
-  app.on('before-quit', () => {
-    lastChildProcess && lastChildProcess.kill();
-  });
+  app.on('before-quit', () => {});
 };
 module.exports = initIPC;

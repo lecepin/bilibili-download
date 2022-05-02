@@ -1,6 +1,7 @@
 import { createMachine, actions } from 'xstate';
 import { message } from 'antd';
 import { ipcRenderer, shell } from 'electron';
+import path from 'path';
 
 export default createMachine(
   {
@@ -137,8 +138,8 @@ export default createMachine(
       action_无内容: actions.log(() => {
         message.error('请输入视频地址');
       }),
-      action_解析错误: actions.log(() => {
-        message.error('解析错误');
+      action_解析错误: actions.log((context, event) => {
+        message.error(event.data);
       }),
       action_存储视频信息: actions.assign((context, event) => {
         return {
@@ -202,7 +203,7 @@ export default createMachine(
         ipcRenderer.send('download-video', {
           videoUrl: context.videoInfo?.videoUrl,
           audioUrl: context.videoInfo?.audioUrl,
-          title: context.savePath,
+          title: path.join(context.savePath, context.videoTitle),
         });
 
         ipcRenderer.once('download-video', (event, arg) => {

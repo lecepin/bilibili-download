@@ -2,7 +2,6 @@ const axios = require('axios');
 const fs = require('fs');
 const os = require('os');
 const child_process = require('child_process');
-const path = require('path');
 const { APP_CONFIG_TOOL_PATH } = require('./const');
 
 function downloadBFile(url, fullFileName, progressCallback) {
