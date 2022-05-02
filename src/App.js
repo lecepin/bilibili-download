@@ -15,7 +15,7 @@ import './App.less';
 export default () => {
   const [state, send] = useMachine(fsm);
   const { biliURL, videoTitle, savePath, progressAudio, progressVideo } = state.context;
-  const disabledTopbar = !['空闲', '下载完成', '下载失败'].some(state.matches);
+  const disabledTopbar = !['操作区.空闲', '操作区.下载完成', '操作区.下载失败'].some(state.matches);
 
   return (
     <div className="App">
@@ -37,7 +37,7 @@ export default () => {
         </Button>
       </Space>
 
-      {state.matches('下载中') ? (
+      {state.matches('操作区.下载中') ? (
         <>
           <Divider />
           <div>正在下载：{videoTitle}</div>
@@ -53,7 +53,7 @@ export default () => {
         </>
       ) : null}
 
-      {state.matches('下载完成') ? (
+      {state.matches('操作区.下载完成') ? (
         <>
           <Divider />
           <div className="App-result">
@@ -66,7 +66,7 @@ export default () => {
         </>
       ) : null}
 
-      {state.matches('下载失败') ? (
+      {state.matches('操作区.下载失败') ? (
         <div className="App-result">
           <Tag icon={<CloseCircleOutlined />} color="error"></Tag>
           <span>下载失败：风月 ❀ 只做你心心念念的江南佳人</span>

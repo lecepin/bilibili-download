@@ -1,7 +1,7 @@
 const { ipcMain, app, dialog, shell } = require('electron');
-const { getDonwloadUrl, downloadBFile, mergeFileToMp4 } = require('./utils');
-const path = require('path');
+const { getDonwloadUrl, downloadBFile, mergeFileToMp4, compareVerUpdate } = require('./utils');
 const { throttle } = require('lodash');
+const axios = require('axios');
 
 const initIPC = () => {
   ipcMain.on('get-video-info', (event, arg) => {
@@ -78,6 +78,18 @@ const initIPC = () => {
 
   ipcMain.on('open-directory', (event, arg) => {
     shell.openPath(arg);
+  });
+
+  ipcMain.on('get-update-info', (event, arg) => {
+    axios
+      .get('https://cdn.jsdelivr.net/gh/lecepin/bilibili-download/package.json?t=' + Date.now())
+      .then(({ data }) => {
+        event.reply('get-update-info', {
+          shouldUpdate: compareVerUpdate(app.getVersion(), data?.version),
+          data,
+        });
+      })
+      .catch(err => {});
   });
 
   app.on('before-quit', () => {});

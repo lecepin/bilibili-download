@@ -1,5 +1,5 @@
 import { createMachine, actions } from 'xstate';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { ipcRenderer, shell } from 'electron';
 import path from 'path';
 
@@ -14,107 +14,122 @@ export default createMachine(
       progressAudio: 0,
     },
     id: 'bilibili download',
-    initial: '空闲',
     on: {
       e_github: {
         actions: 'action_打开github',
       },
     },
+    type: 'parallel',
     states: {
-      空闲: {
-        entry: 'action_初始化进度',
-        on: {
-          e_下载: [
-            {
-              actions: 'action_无内容',
-              cond: 'cond_无内容',
+      操作区: {
+        initial: '空闲',
+        states: {
+          空闲: {
+            entry: 'action_初始化进度',
+            on: {
+              e_下载: [
+                {
+                  actions: 'action_无内容',
+                  cond: 'cond_无内容',
+                },
+                {
+                  target: '解析中',
+                },
+              ],
+              e_输入地址: {
+                actions: 'action_改变地址',
+              },
             },
-            {
-              target: '解析中',
+          },
+          解析中: {
+            invoke: {
+              src: 'invoke_获取视频信息',
+              onDone: [
+                {
+                  target: '选择下载位置',
+                  actions: 'action_存储视频信息',
+                },
+              ],
+              onError: [
+                {
+                  actions: 'action_解析错误',
+                  target: '空闲',
+                },
+              ],
             },
-          ],
-          e_输入地址: {
-            actions: 'action_改变地址',
+          },
+          选择下载位置: {
+            invoke: {
+              src: 'invoke_选择下载位置',
+              onDone: {
+                target: '下载中',
+                actions: 'action_存储下载位置',
+              },
+              onError: {
+                target: '空闲',
+              },
+            },
+          },
+          下载中: {
+            invoke: {
+              src: 'invoke_下载视频',
+            },
+            on: {
+              e_下载完成: {
+                target: '下载完成',
+              },
+              e_下载失败: {
+                target: '下载失败',
+              },
+              e_进度更新: {
+                actions: 'action_进度更新',
+              },
+            },
+          },
+          下载完成: {
+            on: {
+              e_打开目录: {
+                actions: 'action_打开目录',
+              },
+              e_下载: [
+                {
+                  actions: 'action_无内容',
+                  cond: 'cond_无内容',
+                },
+                {
+                  target: '解析中',
+                },
+              ],
+              e_输入地址: {
+                actions: 'action_改变地址',
+              },
+            },
+          },
+          下载失败: {
+            on: {
+              e_下载: [
+                {
+                  actions: 'action_无内容',
+                  cond: 'cond_无内容',
+                },
+                {
+                  target: '解析中',
+                },
+              ],
+              e_输入地址: {
+                actions: 'action_改变地址',
+              },
+            },
           },
         },
       },
-      解析中: {
-        invoke: {
-          src: 'invoke_获取视频信息',
-          onDone: [
-            {
-              target: '选择下载位置',
-              actions: 'action_存储视频信息',
+      后台区: {
+        initial: '检测更新',
+        states: {
+          检测更新: {
+            invoke: {
+              src: 'invoke_检测更新',
             },
-          ],
-          onError: [
-            {
-              actions: 'action_解析错误',
-              target: '空闲',
-            },
-          ],
-        },
-      },
-      选择下载位置: {
-        invoke: {
-          src: 'invoke_选择下载位置',
-          onDone: {
-            target: '下载中',
-            actions: 'action_存储下载位置',
-          },
-          onError: {
-            target: '空闲',
-          },
-        },
-      },
-      下载中: {
-        invoke: {
-          src: 'invoke_下载视频',
-        },
-        on: {
-          e_下载完成: {
-            target: '下载完成',
-          },
-          e_下载失败: {
-            target: '下载失败',
-          },
-          e_进度更新: {
-            actions: 'action_进度更新',
-          },
-        },
-      },
-      下载完成: {
-        on: {
-          e_打开目录: {
-            actions: 'action_打开目录',
-          },
-          e_下载: [
-            {
-              actions: 'action_无内容',
-              cond: 'cond_无内容',
-            },
-            {
-              target: '解析中',
-            },
-          ],
-          e_输入地址: {
-            actions: 'action_改变地址',
-          },
-        },
-      },
-      下载失败: {
-        on: {
-          e_下载: [
-            {
-              actions: 'action_无内容',
-              cond: 'cond_无内容',
-            },
-            {
-              target: '解析中',
-            },
-          ],
-          e_输入地址: {
-            actions: 'action_改变地址',
           },
         },
       },
@@ -224,6 +239,22 @@ export default createMachine(
         return () => {
           ipcRenderer.removeAllListeners('download-progress');
         };
+      },
+      invoke_检测更新: (context, event) => () => {
+        ipcRenderer.send('get-update-info');
+        ipcRenderer.once('get-update-info', (event, arg) => {
+          if (arg.shouldUpdate) {
+            Modal.confirm({
+              title: '检测到新版本',
+              content: '是否更新？',
+              okText: '进入新版本下载页面',
+              cancelText: '取消',
+              onOk: () => {
+                shell.openExternal('https://github.com/lecepin/bilibili-download/releases');
+              },
+            });
+          }
+        });
       },
     },
   },

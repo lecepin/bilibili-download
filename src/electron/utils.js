@@ -94,4 +94,29 @@ function mergeFileToMp4(vFullFileName, aFullFileName, outputFileName, shouldDele
   });
 }
 
-module.exports = { downloadBFile, getDonwloadUrl, mergeFileToMp4 };
+function compareVerUpdate(v1, v2 = '') {
+  const v1Arr = v1.split('.');
+  const v2Arr = v2.split('.');
+  const v1Len = v1Arr.length;
+  const v2Len = v2Arr.length;
+  let repeatCount = Math.min(v1Len, v2Len);
+  let i = 0;
+
+  while (repeatCount--) {
+    if (+v1Arr[i] < +v2Arr[i]) {
+      return true;
+    } else if (+v1Arr[i] > +v2Arr[i]) {
+      return false;
+    }
+    if (repeatCount === 0) {
+      if (v1Len < v2Len) {
+        return true;
+      }
+    }
+    i++;
+  }
+
+  return false;
+}
+
+module.exports = { downloadBFile, getDonwloadUrl, mergeFileToMp4, compareVerUpdate };
