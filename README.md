@@ -3,8 +3,8 @@
 
 请在 [Releases](https://github.com/lecepin/bilibili-download/releases) 中进行下载。
 > 国内用户，如果访问速度慢，可以点击下方链接进行下载：
-> - [Mac 下载](https://github.91chi.fun/https://github.com//lecepin/bilibili-download/releases/download/v1.0.0/Bilibili.Download-1.0.0.dmg)
-> - [Win 32/64 下载](https://github.91chi.fun/https://github.com//lecepin/bilibili-download/releases/download/v1.0.0/Bilibili.Download.Setup.1.0.0.exe)
+> - [Mac 下载](https://github.91chi.fun/https://github.com//lecepin/bilibili-download/releases/download/v1.0.1/Bilibili.Download-1.0.0.dmg)
+> - [Win 32/64 下载](https://github.91chi.fun/https://github.com//lecepin/bilibili-download/releases/download/v1.0.1/Bilibili.Download.Setup.1.0.0.exe)
 
 ![image](https://user-images.githubusercontent.com/11046969/166149972-b9342957-2f5c-4a28-b395-d7c70b41e699.png)
 
